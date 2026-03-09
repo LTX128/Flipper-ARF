@@ -31,19 +31,19 @@ This project may incorporate, adapt, or build upon **other open-source projects*
 |:---|:---|:---:|:---:|:---:|:---:|
 | VAG (VW/Audi/Skoda/Seat) | VAG GROUP | 433 MHz | AM | Yes | Yes |
 | Porsche | Cayenne | 433/868 MHz | AM | Yes | Yes |
-| PSA (Peugeot/Citroën/DS) | PSA GROUP | 433 MHz | FM | Yes | Yes |
-| Ford | Ford V0 | 433 MHz | FM | Yes | Yes |
-| Fiat | Fiat SpA | 433 MHz | FM | Yes | Yes |
-| Fiat | Fiat Mystery | 433 MHz | FM | No | Yes |
+| PSA (Peugeot/Citroën/DS) | PSA GROUP | 433 MHz | AM/FM | Yes | Yes |
+| Ford | Ford V0 | 315/433 MHz | AM | Yes | Yes |
+| Fiat | Fiat SpA | 433 MHz | AM | Yes | Yes |
+| Fiat | Fiat Mystery | 433 MHz | AM | No | Yes |
 | Subaru | Subaru | 433 MHz | AM | Yes | Yes |
-| Mazda | Siemens (5WK49365D) | 433 MHz | FM | Yes | Yes |
+| Mazda | Siemens (5WK49365D) | 315/433 MHz | FM | Yes | Yes |
 | Kia/Hyundai | Kia V0 | 433 MHz | FM | Yes | Yes |
 | Kia/Hyundai | Kia V1 | 315/433 MHz | AM | Yes | Yes |
 | Kia/Hyundai | Kia V2 | 315/433 MHz | FM | Yes | Yes |
 | Kia/Hyundai | Kia V3/V4 | 315/433 MHz | AM/FM | Yes | Yes |
 | Kia/Hyundai | Kia V5 | 433 MHz | FM | Yes | Yes |
 | Kia/Hyundai | Kia V6 | 433 MHz | FM | Yes | Yes |
-| Suzuki | Suzuki | 433 MHz | AM | Yes | Yes |
+| Suzuki | Suzuki | 433 MHz | FM | Yes | Yes |
 | Mitsubishi | Mitsubishi V0 | 868 MHz | FM | Yes | Yes |
 
 ### Gate / Access Protocols
