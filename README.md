@@ -132,7 +132,7 @@ Flipper-ARF aims to achieve:
 
 - [ ] Keeloq Key Manager inside firmware
 - [ ] Add Scher Khan & Starline protocols
-- [ ] Fix and reintegrate RollJam Pro app
+- [ ] Fix and reintegrate RollJam app (future updates)
 - [ ] Expand and refine Subaru, Kia, PSA, and other manufacturer protocols
 - [ ] Improve collaboration workflow to avoid overlapping work
 
