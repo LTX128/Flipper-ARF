@@ -479,6 +479,11 @@ SubGhzProtocolStatus
 
         furi_string_free(temp_str);
 
+        if(hex_pos != 16) {
+            FURI_LOG_E(TAG, "Invalid key length: %zu nibbles", hex_pos);
+            break;
+        }
+
         instance->generic.data = key;
         FURI_LOG_I(TAG, "Parsed key: 0x%016llX", (unsigned long long)instance->generic.data);
 

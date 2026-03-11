@@ -319,6 +319,7 @@ void* kia_protocol_encoder_v5_alloc(SubGhzEnvironment* environment) {
     instance->crc = 0;
 
     kia_v5_tx_done = false;
+    kia_v5_counter_loaded = false;
 
     return instance;
 }
@@ -511,7 +512,6 @@ SubGhzProtocolStatus
                 nibble = c - 'a' + 10;
             } else {
                 KV5_LOG("Invalid hex character: %c", c);
-                furi_string_free(temp_str);
                 break;
             }
 
