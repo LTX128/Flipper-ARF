@@ -185,11 +185,9 @@ const SubGhzProtocolDecoder subghz_protocol_kia_v3_v4_decoder = {
     .feed = subghz_protocol_decoder_kia_v3_v4_feed,
     .reset = subghz_protocol_decoder_kia_v3_v4_reset,
     .get_hash_data = subghz_protocol_decoder_kia_v3_v4_get_hash_data,
-    .get_hash_data_long = NULL,
     .serialize = subghz_protocol_decoder_kia_v3_v4_serialize,
     .deserialize = subghz_protocol_decoder_kia_v3_v4_deserialize,
     .get_string = subghz_protocol_decoder_kia_v3_v4_get_string,
-    .get_string_brief = NULL,
 };
 
 const SubGhzProtocolEncoder subghz_protocol_kia_v3_v4_encoder = {
