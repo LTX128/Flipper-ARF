@@ -140,13 +140,13 @@ Flipper-ARF aims to achieve:
 - [x] VAG MFKey support and updated Keeloq codes
 - [x] PSA XTEA brute force for saved → emulation workflow
 - [x] Brute force of counter in saved → can be accellerated trough the companion app via bluetooth
-- [x] RollJam app (Internal CC1101 for RX & TX captured signal; External CC1101 for jamming) — requires more real-world testing
+- [X] Keeloq Key Manager inside firmware
+- [x] RollJam app (Internal CC1101 for RX & TX captured signal; External CC1101 for jamming) — requires more real-world testing (no available yet)
 
 ---
 
 ## To Do / Planned Features
 
-- [X] Keeloq Key Manager inside firmware
 - [ ] Add Scher Khan & Starline protocols
 - [ ] Fix and reintegrate RollJam app (future updates)
 - [ ] Expand and refine Subaru, Kia, PSA, and other manufacturer protocols
