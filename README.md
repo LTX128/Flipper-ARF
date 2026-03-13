@@ -42,67 +42,67 @@ This project may incorporate, adapt, or build upon **other open-source projects*
 
 ### Automotive Protocols
 
-| Manufacturer | Protocol | Frequency | Modulation | Encoder | Decoder |
-|:---|:---|:---:|:---:|:---:|:---:|
-| VAG (VW/Audi/Skoda/Seat) | VAG GROUP | 433 MHz | AM | Yes | Yes |
-| Porsche | Cayenne | 433/868 MHz | AM | Yes | Yes |
-| PSA (Peugeot/Citroën/DS) | PSA GROUP | 433 MHz | AM/FM | Yes | Yes |
-| Ford | Ford V0 | 315/433 MHz | AM | Yes | Yes |
-| Fiat | Fiat SpA | 433 MHz | AM | Yes | Yes |
-| Fiat | Fiat Marelli | 433 MHz | AM | No | Yes |
-| Subaru | Subaru | 433 MHz | AM | Yes | Yes |
-| Mazda | Siemens (5WK49365D) | 315/433 MHz | FM | Yes | Yes |
-| Kia/Hyundai | Kia V0 | 433 MHz | FM | Yes | Yes |
-| Kia/Hyundai | Kia V1 | 315/433 MHz | AM | Yes | Yes |
-| Kia/Hyundai | Kia V2 | 315/433 MHz | FM | Yes | Yes |
-| Kia/Hyundai | Kia V3/V4 | 315/433 MHz | AM/FM | Yes | Yes |
-| Kia/Hyundai | Kia V5 | 433 MHz | FM | Yes | Yes |
-| Kia/Hyundai | Kia V6 | 433 MHz | FM | Yes | Yes |
-| Suzuki | Suzuki | 433 MHz | FM | Yes | Yes |
-| Mitsubishi | Mitsubishi V0 | 868 MHz | FM | Yes | Yes |
+| Manufacturer | Protocol | Frequency | Modulation | Encoder | Decoder | CRC |
+|:---|:---|:---:|:---:|:---:|:---:|:---:|
+| VAG (VW/Audi/Skoda/Seat) | VAG GROUP | 433 MHz | AM | Yes | Yes | No |
+| Porsche | Cayenne | 433/868 MHz | AM | Yes | Yes | No |
+| PSA (Peugeot/Citroën/DS) | PSA GROUP | 433 MHz | AM/FM | Yes | Yes | Yes |
+| Ford | Ford V0 | 315/433 MHz | AM | Yes | Yes | Yes |
+| Fiat | Fiat SpA | 433 MHz | AM | Yes | Yes | Yes |
+| Fiat | Fiat Marelli | 433 MHz | AM | No | Yes | No |
+| Subaru | Subaru | 433 MHz | AM | Yes | Yes | No |
+| Mazda | Siemens (5WK49365D) | 315/433 MHz | FM | Yes | Yes | Yes |
+| Kia/Hyundai | Kia V0 | 433 MHz | FM | Yes | Yes | Yes |
+| Kia/Hyundai | Kia V1 | 315/433 MHz | AM | Yes | Yes | Yes |
+| Kia/Hyundai | Kia V2 | 315/433 MHz | FM | Yes | Yes | Yes |
+| Kia/Hyundai | Kia V3/V4 | 315/433 MHz | AM/FM | Yes | Yes | Yes |
+| Kia/Hyundai | Kia V5 | 433 MHz | FM | Yes | Yes | Yes |
+| Kia/Hyundai | Kia V6 | 433 MHz | FM | Yes | Yes | Yes |
+| Suzuki | Suzuki | 433 MHz | FM | Yes | Yes | Yes |
+| Mitsubishi | Mitsubishi V0 | 868 MHz | FM | Yes | Yes | No |
 
 ### Gate / Access Protocols
 
-| Protocol | Frequency | Modulation | Encoder | Decoder |
-|:---|:---:|:---:|:---:|:---:|
-| Keeloq | 433/868/315 MHz | AM | Yes | Yes |
-| Nice FLO | 433 MHz | AM | Yes | Yes |
-| Nice FloR-S | 433 MHz | AM | Yes | Yes |
-| CAME | 433/315 MHz | AM | Yes | Yes |
-| CAME TWEE | 433 MHz | AM | Yes | Yes |
-| CAME Atomo | 433 MHz | AM | Yes | Yes |
-| Faac SLH | 433/868 MHz | AM | Yes | Yes |
-| Somfy Telis | 433 MHz | AM | Yes | Yes |
-| Somfy Keytis | 433 MHz | AM | Yes | Yes |
-| Alutech AT-4N | 433 MHz | AM | Yes | Yes |
-| KingGates Stylo4k | 433 MHz | AM | Yes | Yes |
-| Beninca ARC | 433 MHz | AM | Yes | Yes |
-| Hormann HSM | 433/868 MHz | AM | Yes | Yes |
-| Marantec | 433 MHz | AM | Yes | Yes |
-| Marantec24 | 433 MHz | AM | Yes | Yes |
+| Protocol | Frequency | Modulation | Encoder | Decoder | CRC |
+|:---|:---:|:---:|:---:|:---:|:---:|
+| Keeloq | 433/868/315 MHz | AM | Yes | Yes | No |
+| Nice FLO | 433 MHz | AM | Yes | Yes | No |
+| Nice FloR-S | 433 MHz | AM | Yes | Yes | Yes |
+| CAME | 433/315 MHz | AM | Yes | Yes | No |
+| CAME TWEE | 433 MHz | AM | Yes | Yes | No |
+| CAME Atomo | 433 MHz | AM | Yes | Yes | No |
+| Faac SLH | 433/868 MHz | AM | Yes | Yes | No |
+| Somfy Telis | 433 MHz | AM | Yes | Yes | Yes |
+| Somfy Keytis | 433 MHz | AM | Yes | Yes | Yes |
+| Alutech AT-4N | 433 MHz | AM | Yes | Yes | Yes |
+| KingGates Stylo4k | 433 MHz | AM | Yes | Yes | No |
+| Beninca ARC | 433 MHz | AM | Yes | Yes | No |
+| Hormann HSM | 433/868 MHz | AM | Yes | Yes | No |
+| Marantec | 433 MHz | AM | Yes | Yes | Yes |
+| Marantec24 | 433 MHz | AM | Yes | Yes | Yes |
 
 ### General Static Protocols
 
-| Protocol | Frequency | Modulation | Encoder | Decoder |
-|:---|:---:|:---:|:---:|:---:|
-| Princeton | 433/315 MHz | AM | Yes | Yes |
-| Linear | 315 MHz | AM | Yes | Yes |
-| LinearDelta3 | 315 MHz | AM | Yes | Yes |
-| GateTX | 433 MHz | AM | Yes | Yes |
-| Security+ 1.0 | 315 MHz | AM | Yes | Yes |
-| Security+ 2.0 | 315 MHz | AM | Yes | Yes |
-| Chamberlain Code | 315 MHz | AM | Yes | Yes |
-| MegaCode | 315 MHz | AM | Yes | Yes |
-| Mastercode | 433 MHz | AM | Yes | Yes |
-| Dickert MAHS | 433 MHz | AM | Yes | Yes |
-| SMC5326 | 433 MHz | AM | Yes | Yes |
-| Phoenix V2 | 433 MHz | AM | Yes | Yes |
-| Doitrand | 433 MHz | AM | Yes | Yes |
-| Hay21 | 433 MHz | AM | Yes | Yes |
-| Revers RB2 | 433 MHz | AM | Yes | Yes |
-| Roger | 433 MHz | AM | Yes | Yes |
-| BinRAW | 433/315/868 MHz | AM/FM | Yes | Yes |
-| RAW | All | All | Yes | Yes |
+| Protocol | Frequency | Modulation | Encoder | Decoder | CRC |
+|:---|:---:|:---:|:---:|:---:|:---:|
+| Princeton | 433/315 MHz | AM | Yes | Yes | No |
+| Linear | 315 MHz | AM | Yes | Yes | No |
+| LinearDelta3 | 315 MHz | AM | Yes | Yes | No |
+| GateTX | 433 MHz | AM | Yes | Yes | No |
+| Security+ 1.0 | 315 MHz | AM | Yes | Yes | No |
+| Security+ 2.0 | 315 MHz | AM | Yes | Yes | No |
+| Chamberlain Code | 315 MHz | AM | Yes | Yes | No |
+| MegaCode | 315 MHz | AM | Yes | Yes | No |
+| Mastercode | 433 MHz | AM | Yes | Yes | No |
+| Dickert MAHS | 433 MHz | AM | Yes | Yes | No |
+| SMC5326 | 433 MHz | AM | Yes | Yes | No |
+| Phoenix V2 | 433 MHz | AM | Yes | Yes | No |
+| Doitrand | 433 MHz | AM | Yes | Yes | No |
+| Hay21 | 433 MHz | AM | Yes | Yes | No |
+| Revers RB2 | 433 MHz | AM | Yes | Yes | No |
+| Roger | 433 MHz | AM | Yes | Yes | No |
+| BinRAW | 433/315/868 MHz | AM/FM | Yes | Yes | No |
+| RAW | All | All | Yes | Yes | No |
 
 ---
 
