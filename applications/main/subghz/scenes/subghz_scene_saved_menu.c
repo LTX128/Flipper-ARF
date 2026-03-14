@@ -43,25 +43,9 @@ void subghz_scene_saved_menu_on_enter(void* context) {
     if(fff) {
         uint32_t cnt_tmp = 0;
         flipper_format_rewind(fff);
-        bool got_uint = flipper_format_read_uint32(fff, "Cnt", &cnt_tmp, 1);
-        FURI_LOG_I("SAVEDMENU", "Cnt uint32 read: %d val=%lu", (int)got_uint, (unsigned long)cnt_tmp);
-        if(got_uint) {
+        if(flipper_format_read_uint32(fff, "Cnt", &cnt_tmp, 1)) {
             has_counter = true;
-        } else {
-            FuriString* cnt_str = furi_string_alloc();
-            flipper_format_rewind(fff);
-            bool got_str = flipper_format_read_string(fff, "Cnt", cnt_str);
-            FURI_LOG_I("SAVEDMENU", "Cnt string read: %d val=%s", (int)got_str, got_str ? furi_string_get_cstr(cnt_str) : "N/A");
-            if(got_str && furi_string_size(cnt_str) > 0) {
-                has_counter = true;
-            }
-            furi_string_free(cnt_str);
         }
-        FuriString* proto_dbg = furi_string_alloc();
-        flipper_format_rewind(fff);
-        flipper_format_read_string(fff, "Protocol", proto_dbg);
-        FURI_LOG_I("SAVEDMENU", "Protocol=%s has_counter=%d", furi_string_get_cstr(proto_dbg), (int)has_counter);
-        furi_string_free(proto_dbg);
     }
 
     submenu_add_item(

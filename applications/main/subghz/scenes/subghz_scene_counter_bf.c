@@ -19,7 +19,7 @@ typedef struct {
     uint32_t step;
     CounterBfState state;
     uint32_t packets_sent;
-    uint32_t tick_wait; // ticks remaining before next TX
+    uint32_t tick_wait;
 } CounterBfContext;
 
 #define CounterBfEventStart (0xC0)
@@ -27,7 +27,6 @@ typedef struct {
 
 static void counter_bf_widget_callback(GuiButtonType result, InputType type, void* context) {
     SubGhz* subghz = context;
-    // Single press toggles start/stop
     if(result == GuiButtonTypeCenter && type == InputTypeShort) {
         view_dispatcher_send_custom_event(subghz->view_dispatcher, CounterBfEventStart);
     }
@@ -36,7 +35,8 @@ static void counter_bf_widget_callback(GuiButtonType result, InputType type, voi
 static void counter_bf_draw(SubGhz* subghz, CounterBfContext* ctx) {
     widget_reset(subghz->widget);
     FuriString* str = furi_string_alloc();
-    furi_string_printf(str,
+    furi_string_printf(
+        str,
         "Counter BruteForce\n"
         "Cnt: 0x%08lX\n"
         "Sent: %lu pkts\n"
@@ -45,28 +45,48 @@ static void counter_bf_draw(SubGhz* subghz, CounterBfContext* ctx) {
         ctx->packets_sent,
         ctx->start_cnt);
     widget_add_string_multiline_element(
-        subghz->widget, 0, 0, AlignLeft, AlignTop, FontSecondary,
-        furi_string_get_cstr(str));
+        subghz->widget, 0, 0, AlignLeft, AlignTop, FontSecondary, furi_string_get_cstr(str));
     furi_string_free(str);
     const char* btn_label = ctx->state == CounterBfStateRunning ? "Stop" : "Start";
     widget_add_button_element(
-        subghz->widget, GuiButtonTypeCenter, btn_label,
-        counter_bf_widget_callback, subghz);
+        subghz->widget,
+        GuiButtonTypeCenter,
+        btn_label,
+        counter_bf_widget_callback,
+        subghz);
+}
+
+static void counter_bf_save(SubGhz* subghz, CounterBfContext* ctx) {
+    // Escribir el Cnt final directamente en el archivo .sub en disco.
+    // No usar subghz_save_protocol_to_file() porque ese serializa el estado
+    // actual del encoder (que puede tener el Cnt ya incrementado internamente).
+    Storage* storage = furi_record_open(RECORD_STORAGE);
+    FlipperFormat* file_fff = flipper_format_buffered_file_alloc(storage);
+    if(flipper_format_buffered_file_open_existing(
+           file_fff, furi_string_get_cstr(subghz->file_path))) {
+        if(!flipper_format_update_uint32(file_fff, "Cnt", &ctx->current_cnt, 1)) {
+            FURI_LOG_E(TAG, "Failed to update Cnt in .sub file");
+        }
+    } else {
+        FURI_LOG_E(TAG, "Failed to open .sub file for Cnt write");
+    }
+    flipper_format_free(file_fff);
+    furi_record_close(RECORD_STORAGE);
 }
 
 static void counter_bf_send(SubGhz* subghz, CounterBfContext* ctx) {
-    // Stop any previous TX
     subghz_txrx_stop(subghz->txrx);
 
-    // Use official counter override mechanism
-    subghz_block_generic_global_counter_override_set(ctx->current_cnt);
-    // Increase repeat for stronger signal
     FlipperFormat* fff = subghz_txrx_get_fff_data(subghz->txrx);
-    flipper_format_rewind(fff);
-    uint32_t repeat = 20;
-    flipper_format_insert_or_update_uint32(fff, "Repeat", &repeat, 1);
 
-    subghz_block_generic_global.endless_tx = false;
+    uint32_t repeat = 20;
+    flipper_format_rewind(fff);
+    flipper_format_update_uint32(fff, "Repeat", &repeat, 1);
+
+    // Actualizar Cnt DESPUES de Repeat (update es secuencial en el buffer)
+    flipper_format_rewind(fff);
+    flipper_format_update_uint32(fff, "Cnt", &ctx->current_cnt, 1);
+
     subghz_tx_start(subghz, fff);
 
     ctx->packets_sent++;
@@ -81,20 +101,36 @@ void subghz_scene_counter_bf_on_enter(void* context) {
     ctx->state = CounterBfStateIdle;
     ctx->step = 1;
 
-    FlipperFormat* fff = subghz_txrx_get_fff_data(subghz->txrx);
-    uint32_t cnt = 0;
-    flipper_format_rewind(fff);
-    flipper_format_read_uint32(fff, "Cnt", &cnt, 1);
-    ctx->current_cnt = cnt;
-    ctx->start_cnt = cnt;
+    // FIX: Leer el Cnt DIRECTAMENTE del archivo en disco con un FlipperFormat
+    // propio, completamente separado del fff en memoria (que puede tener el Cnt
+    // modificado por TXs previas y no refleja el estado real del .sub).
+    {
+        Storage* storage = furi_record_open(RECORD_STORAGE);
+        FlipperFormat* file_fff = flipper_format_buffered_file_alloc(storage);
+        if(flipper_format_buffered_file_open_existing(
+               file_fff, furi_string_get_cstr(subghz->file_path))) {
+            uint32_t cnt = 0;
+            if(flipper_format_read_uint32(file_fff, "Cnt", &cnt, 1)) {
+                ctx->current_cnt = cnt;
+                ctx->start_cnt = cnt;
+            } else {
+                FURI_LOG_W(TAG, "Cnt field not found in file");
+            }
+        } else {
+            FURI_LOG_E(TAG, "Failed to open .sub file for Cnt read");
+        }
+        flipper_format_free(file_fff);
+        furi_record_close(RECORD_STORAGE);
+    }
 
     scene_manager_set_scene_state(
         subghz->scene_manager, SubGhzSceneCounterBf, (uint32_t)(uintptr_t)ctx);
 
-    // Disable auto-increment
+    // Deshabilitar auto-increment del protocolo para controlar el Cnt manualmente
     furi_hal_subghz_set_rolling_counter_mult(0);
 
-    // Reload protocol to ensure preset and tx_power are properly configured
+    // Recargar el protocolo DESPUES de haber leído el Cnt del disco,
+    // para preparar el fff para TX sin que pise nuestro valor leído.
     subghz_key_load(subghz, furi_string_get_cstr(subghz->file_path), false);
 
     counter_bf_draw(subghz, ctx);
@@ -110,16 +146,17 @@ bool subghz_scene_counter_bf_on_event(void* context, SceneManagerEvent event) {
     if(event.type == SceneManagerEventTypeCustom) {
         if(event.event == CounterBfEventStart) {
             if(ctx->state != CounterBfStateRunning) {
-                // Start
                 ctx->state = CounterBfStateRunning;
                 ctx->tick_wait = 0;
                 subghz->state_notifications = SubGhzNotificationStateTx;
                 counter_bf_send(subghz, ctx);
             } else {
-                // Stop
+                // FIX 2: Al detener, guardar el contador actual en el .sub
+                // para que al volver a emular manualmente continúe desde acá.
                 ctx->state = CounterBfStateStopped;
                 subghz_txrx_stop(subghz->txrx);
                 subghz->state_notifications = SubGhzNotificationStateIDLE;
+                counter_bf_save(subghz, ctx);
             }
             counter_bf_draw(subghz, ctx);
             return true;
@@ -130,7 +167,6 @@ bool subghz_scene_counter_bf_on_event(void* context, SceneManagerEvent event) {
             if(ctx->tick_wait > 0) {
                 ctx->tick_wait--;
             } else {
-                // Time to send next packet
                 ctx->current_cnt += ctx->step;
                 counter_bf_send(subghz, ctx);
                 counter_bf_draw(subghz, ctx);
@@ -138,16 +174,11 @@ bool subghz_scene_counter_bf_on_event(void* context, SceneManagerEvent event) {
         }
         return true;
     } else if(event.type == SceneManagerEventTypeBack) {
-        subghz_block_generic_global.endless_tx = false;
         subghz_txrx_stop(subghz->txrx);
         subghz->state_notifications = SubGhzNotificationStateIDLE;
 
-        // Save counter to file
-        FlipperFormat* fff = subghz_txrx_get_fff_data(subghz->txrx);
-        flipper_format_rewind(fff);
-        flipper_format_update_uint32(fff, "Cnt", &ctx->current_cnt, 1);
-        subghz_save_protocol_to_file(
-            subghz, fff, furi_string_get_cstr(subghz->file_path));
+        // FIX 2 (también en Back): guardar siempre al salir
+        counter_bf_save(subghz, ctx);
 
         furi_hal_subghz_set_rolling_counter_mult(1);
         free(ctx);
@@ -160,6 +191,5 @@ bool subghz_scene_counter_bf_on_event(void* context, SceneManagerEvent event) {
 void subghz_scene_counter_bf_on_exit(void* context) {
     SubGhz* subghz = context;
     widget_reset(subghz->widget);
-    subghz_block_generic_global.endless_tx = false;
     subghz->state_notifications = SubGhzNotificationStateIDLE;
 }

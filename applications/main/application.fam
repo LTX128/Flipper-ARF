@@ -8,6 +8,7 @@ App(
         "lfrfid",
         "nfc",
         "subghz",
+        "rolljam",
         "subghz_bruteforcer",
         "archive",
         "subghz_remote",

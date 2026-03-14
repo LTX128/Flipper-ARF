@@ -284,6 +284,11 @@ SubGhzProtocolStatus subghz_protocol_decoder_suzuki_serialize(void *context, Fli
     instance->generic.btn = temp_btn;
     
     return ret;
+    if(ret == SubGhzProtocolStatusOk) {
+        flipper_format_write_uint32(flipper_format, "Serial", &temp_serial, 1);
+        flipper_format_write_uint32(flipper_format, "Btn", &temp_btn, 1);
+        flipper_format_write_uint32(flipper_format, "Cnt", &temp_cnt, 1);
+    }
 }
 
 SubGhzProtocolStatus subghz_protocol_decoder_suzuki_deserialize(void *context, FlipperFormat *flipper_format)
