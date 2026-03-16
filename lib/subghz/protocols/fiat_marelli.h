@@ -1,14 +1,6 @@
 #pragma once
 
-#include <furi.h>
-#include <lib/subghz/protocols/base.h>
-#include <lib/subghz/types.h>
-#include <lib/subghz/blocks/const.h>
-#include <lib/subghz/blocks/decoder.h>
-#include <lib/subghz/blocks/encoder.h>
-#include <lib/subghz/blocks/generic.h>
-#include <lib/subghz/blocks/math.h>
-#include <lib/toolbox/manchester_decoder.h>
+#include "base.h"
 #include <flipper_format/flipper_format.h>
 
 #define FIAT_MARELLI_PROTOCOL_NAME "Fiat Marelli"
@@ -31,7 +23,6 @@ SubGhzProtocolStatus
     subghz_protocol_decoder_fiat_marelli_deserialize(void* context, FlipperFormat* flipper_format);
 void subghz_protocol_decoder_fiat_marelli_get_string(void* context, FuriString* output);
 
-// Encoder (replay of captured frames)
 void* subghz_protocol_encoder_fiat_marelli_alloc(SubGhzEnvironment* environment);
 void subghz_protocol_encoder_fiat_marelli_free(void* context);
 SubGhzProtocolStatus

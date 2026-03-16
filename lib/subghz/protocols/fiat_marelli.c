@@ -1,6 +1,14 @@
 #include "fiat_marelli.h"
-#include <inttypes.h>
+
+#include "../blocks/const.h"
+#include "../blocks/decoder.h"
+#include "../blocks/encoder.h"
+#include "../blocks/generic.h"
+#include "../blocks/math.h"
+#include "../blocks/custom_btn_i.h"
 #include <lib/toolbox/manchester_decoder.h>
+#include <lib/toolbox/manchester_encoder.h>
+#include <furi_hal_subghz.h>
 
 #define TAG "FiatMarelli"
 
@@ -518,28 +526,6 @@ void subghz_protocol_decoder_fiat_marelli_feed(void* context, bool level, uint32
             instance->generic.btn = (instance->raw_data[6] >> 4) & 0xF;
             instance->generic.cnt = (instance->raw_data[7] >> 3) & 0x1F;
 
-            const char* variant = (instance->te_detected &&
-                                   instance->te_detected < FIAT_MARELLI_TE_TYPE_AB_BOUNDARY)
-                                      ? "B"
-                                      : "A";
-
-            FURI_LOG_I(
-                TAG,
-                "Type%s TE:%lu %db Sn:%08lX Btn:0x%X Ep:%X Ctr:%lu Roll:%02X%02X%02X%02X%02X%02X",
-                variant,
-                instance->te_detected ? instance->te_detected : te_short,
-                instance->bit_count,
-                instance->generic.serial,
-                instance->generic.btn,
-                instance->raw_data[6] & 0xF,
-                instance->generic.cnt,
-                instance->raw_data[7],
-                instance->raw_data[8],
-                instance->raw_data[9],
-                instance->raw_data[10],
-                instance->raw_data[11],
-                instance->raw_data[12]);
-
             if(instance->base.callback) {
                 instance->base.callback(&instance->base, instance->base.context);
             }
@@ -633,34 +619,35 @@ void subghz_protocol_decoder_fiat_marelli_get_string(void* context, FuriString* 
     furi_check(context);
     SubGhzProtocolDecoderFiatMarelli* instance = context;
 
-    uint8_t total_bytes = (instance->bit_count + 7) / 8;
-    if(total_bytes > 13) total_bytes = 13;
-
     uint8_t epoch = instance->raw_data[6] & 0xF;
     uint8_t counter = (instance->raw_data[7] >> 3) & 0x1F;
-
     const char* variant = (instance->te_detected &&
                            instance->te_detected < FIAT_MARELLI_TE_TYPE_AB_BOUNDARY)
                               ? "B"
                               : "A";
+    uint8_t scramble = (instance->raw_data[7] >> 1) & 0x3;
+    uint8_t fixed    =  instance->raw_data[7] & 0x1;
 
     furi_string_cat_printf(
         output,
         "%s %dbit\r\n"
-        "Sn:%08lX Btn:%s\r\n"
-        "Ep:%X Ctr:%02d Type%s\r\n"
-        "R:%02X%02X%02X%02X%02X%02X",
+        "Enc:%02X%02X%02X%02X%02X Scr:%02X\r\n"
+        "Raw:%02X%02X Fixed:%X\r\n"
+        "Sn:%08X Cnt:%02X\r\n"
+        "Btn:%02X:[%s] Ep:%02X\r\n"
+        "Tp:%s\r\n",
         instance->generic.protocol_name,
-        instance->bit_count,
-        instance->generic.serial,
+        (int)instance->bit_count,
+        instance->raw_data[8], instance->raw_data[9],
+        instance->raw_data[10], instance->raw_data[11],
+        instance->raw_data[12],
+        (unsigned)scramble,
+        instance->raw_data[6], instance->raw_data[7],
+        (unsigned)fixed,
+        (unsigned int)instance->generic.serial,
+        (unsigned)counter,
+        (unsigned)instance->generic.btn,
         fiat_marelli_button_name(instance->generic.btn),
-        epoch,
-        counter,
-        variant,
-        instance->raw_data[7],
-        instance->raw_data[8],
-        instance->raw_data[9],
-        (total_bytes > 10) ? instance->raw_data[10] : 0,
-        (total_bytes > 11) ? instance->raw_data[11] : 0,
-        (total_bytes > 12) ? instance->raw_data[12] : 0);
+        (unsigned)epoch,
+        variant);
 }
